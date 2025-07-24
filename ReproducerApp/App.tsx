@@ -5,24 +5,76 @@
  * @format
  */
 
-import { NewAppScreen } from '@react-native/new-app-screen';
-import { StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import * as React from 'react';
+import {
+  Button,
+  TextInput,
+  View,
+  ScrollView,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
+import { NavigationContainer, useNavigation } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Toast from 'react-native-toast-message';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+function ListScreen() {
+  const navigation = useNavigation();
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <NewAppScreen templateFileName="App.tsx" />
+    <View>
+      <Button title="Form" onPress={() => navigation.popTo('Form')} />
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
+function FormScreen() {
+  const navigation = useNavigation();
 
-export default App;
+  return (
+    <View>
+      <TouchableOpacity
+        onPress={() => {
+          Toast.show({
+            type: 'success',
+          });
+          navigation.popTo('List');
+        }}
+      >
+        <Text
+          style={{ backgroundColor: 'skyblue', color: 'white', padding: 10 }}
+        >
+          Submit
+        </Text>
+      </TouchableOpacity>
+      <ScrollView>
+        <>
+          <TextInput placeholder="Title" />
+          <TextInput placeholder="Description" />
+        </>
+      </ScrollView>
+    </View>
+  );
+}
+
+const Stack = createNativeStackNavigator();
+
+function RootStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Form" component={FormScreen} />
+      <Stack.Screen name="List" component={ListScreen} />
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <>
+      <NavigationContainer>
+        <RootStack />
+      </NavigationContainer>
+      <Toast position="top" autoHide visibilityTime={4000} />
+    </>
+  );
+}
